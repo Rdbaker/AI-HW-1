@@ -24,11 +24,11 @@ class Terrain(object):
         self.goal_position = self._find_goal()
 
     def get_start_position(self):
-        """Getter for the start node"""
+        """Getter for the start node position"""
         return self.start_position
 
     def get_goal_position(self):
-        """Getter for the goal node"""
+        """Getter for the goal node position"""
         return self.goal_position
 
     def get_node_cost(self, row, col):
