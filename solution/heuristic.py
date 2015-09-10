@@ -118,8 +118,6 @@ def heuristic6(node_coords, node_dir, goal):
 
     direction = UP
 
-    print difrow, difcol
-
     if difrow == 0:
         rowdirection = NOTHING
     elif difrow > 0:

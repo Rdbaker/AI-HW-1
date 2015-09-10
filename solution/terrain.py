@@ -37,8 +37,8 @@ class Terrain(object):
 
     def node_inside_terrain(self, node):
         pos = node.position
-        inside_x_bounds = (pos[0] > -1 and pos[0] < len(self.terrain_map[0]))
-        inside_y_bounds = (pos[1] > -1 and pos[1] < len(self.terrain_map))
+        inside_x_bounds = (pos[0] > -1 and pos[0] < len(self.terrain_map))
+        inside_y_bounds = (pos[1] > -1 and pos[1] < len(self.terrain_map[0]))
         return inside_x_bounds and inside_y_bounds
 
     def get_node_cost(self, row, col):

@@ -47,14 +47,14 @@ class Agent(object):
             node = self.search_heap.pop()
             # add the node to self.visited to show we visited it
             self.visited.append(node)
-
+            """
             print "current position:"
             print node.position
             print "current direction:"
             print node.direction
             print "node g score:"
             print node.g
-
+            """
             if self.terrain.is_goal_node(node):
                 # TODO: make it return the path to the goal
                 # as a sequence of nodes
@@ -96,20 +96,18 @@ class Agent(object):
     def assign_g_cost(self, node, parent, terrain, action):
         if 'turn' in action:
             # Update the g costs of the nodes
-            return(node.g +
-                       self.action_costs['turn'](
+            return(parent.g +
+                   self.action_costs['turn'](
                            self.terrain.get_cost_from_tuple(
                                node.position)))
         elif action == 'move_forward':
-            return node.g + self.action_costs['forward'](
+            return parent.g + self.action_costs['forward'](
                                     self.terrain.get_cost_from_tuple(
                                         node.position))
         else:
-            return self.action_costs['bash'](0) + self.action_costs['forward'](
+            return parent.g + self.action_costs['bash'](0) + self.action_costs['forward'](
                                         self.terrain.get_cost_from_tuple(
-                                            self.forward(Node(position=self.forward(node),
-                                                              direction=node.direction,
-                                                              depth=node.depth))))
+                                            node.position))
 
     def forward(self, node):
         """The rules to move forward"""
