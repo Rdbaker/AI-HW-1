@@ -31,6 +31,10 @@ class Terrain(object):
         """Getter for the goal node"""
         return self.goal_position
 
+    def get_cost_from_tuple(self, t):
+        """Get the cost of a node from a coordinate pairing"""
+        return self.get_node_cost(t[0], t[1])
+
     def get_node_cost(self, row, col):
         """Get the cost of a node from coordinates"""
         cost = self.terrain_map[row][col]
@@ -49,3 +53,7 @@ class Terrain(object):
             for j, col in enumerate(row):
                 if col == 'G':
                     return (i, j)
+
+    def is_goal_node(self, node):
+        """Return True if the given node is in the goal position"""
+        return node.position == self.get_goal_position()
