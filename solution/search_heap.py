@@ -20,9 +20,9 @@ class SearchHeap(object):
     def __init__(self, initial=None, g_func=None, h_func=None, goal=None):
         # This auto stores a min heap, but we want a max heap
         # (smallest negative number) so we'll do negative of the scores
-        self.key = lambda node: -g_func(node) + -h_func(node.position,
-                                                        node.direction,
-                                                        goal)
+        self.key = lambda node: -g_func(node) + h_func(node.position,
+                                                       node.direction,
+                                                       goal)
         if initial is not None:
             self._data = [(self.key(item), item) for item in initial]
             heapq.heapify(self._data)
