@@ -16,8 +16,9 @@ class Node(object):
         :param: direction - one of ['N', 'E', 'S', 'W'], corresponding to the
                             direction
     """
-    def __init__(self, position, direction):
+    def __init__(self, position, direction, depth):
         self.position = position
+        self.depth = depth
         self.direction = direction
         self.g = 0
         self.h = 0

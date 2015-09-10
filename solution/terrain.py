@@ -35,6 +35,12 @@ class Terrain(object):
         """Get the cost of a node from a coordinate pairing"""
         return self.get_node_cost(t[0], t[1])
 
+    def node_inside_terrain(self, node):
+        pos = node.position
+        inside_x_bounds = (pos[0] > -1 and pos[0] < len(self.terrain_map[0]))
+        inside_y_bounds = (pos[1] > -1 and pos[1] < len(self.terrain_map))
+        return inside_x_bounds and inside_y_bounds
+
     def get_node_cost(self, row, col):
         """Get the cost of a node from coordinates"""
         cost = self.terrain_map[row][col]

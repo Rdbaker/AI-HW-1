@@ -7,7 +7,6 @@
         Anthony Romeo
 """
 from solution import solution
-import re
 
 
 def start_homework(file_n, heuristic):
@@ -15,13 +14,20 @@ def start_homework(file_n, heuristic):
     terrain_map = []
     try:
         with open(file_n, 'r') as file_p:
-            for line in file_p:
-                # split the line on tabs
-                row = re.split(r'[\t+]', line)
-                # strip the \r\n or \n off the end of the lines
-                # there's probably a better way to do this
-                row[-1] = row[-1][0]
-                terrain_map.append(row)
+            # pretty solution
+            terrain_map = [line.split() for line in file_p]
+        # they're all strings right now, so we need to cast them to integers
+        # unless they're 'S' or 'G'
+        for i, row in enumerate(terrain_map):
+            for j, col in enumerate(row):
+                if col != 'S' and col != 'G':
+                    terrain_map[i][j] = int(col)
+
+        # but now we have our terrain map in the (y, x) ordered
+        # pair positions. i.e. map[i] will select value on the Y axis
+        # and map[0][j] will select a value on the X axis. so we should
+        # switch those two
+        terrain_map = zip(*terrain_map)
     except IOError:
         print 'Program exiting, could not find file.'
         exit(1)

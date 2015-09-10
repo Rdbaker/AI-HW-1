@@ -17,8 +17,10 @@ class SearchHeap(object):
         :param: eval_fn - the function to determine which node to pop next
     """
 
-    def __init__(self, initial=None, eval_fn=lambda x: x):
-        self.key = eval_fn
+    def __init__(self, initial=None, g_func=None, h_func=None, goal=None):
+        self.key = lambda node: g_func(node) + h_func(node.position,
+                                                      node.direction,
+                                                      goal)
         if initial is not None:
             self._data = [(self.key(item), item) for item in initial]
             heapq.heapify(self._data)

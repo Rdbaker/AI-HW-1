@@ -16,16 +16,13 @@ LEFT = 5
 NOTHING = 3
 
 
-def heuristic1():
+def heuristic1(node_coords, node_dir, goal_coords):
     return 0
 
 
-def heuristic2(terrainmap):
-
-    start = terrainmap.get_start_node()
-    goal = terrainmap.get_goal_node()
-    startrow = start[0]
-    startcol = start[1]
+def heuristic2(node_coords, node_dir, goal):
+    startrow = node_coords[0]
+    startcol = node_coords[1]
     goalrow = goal[0]
     goalcol = goal[1]
     difrow = abs(startrow - goalrow)
@@ -37,10 +34,8 @@ def heuristic2(terrainmap):
         return difrow
 
 
-def heuristic3(terrainmap):
-
-    start = terrainmap.get_start_node()
-    goal = terrainmap.get_goal_node()
+def heuristic3(node_coords, node_dir, goal):
+    start = node_coords
     startrow = start[0]
     startcol = start[1]
     goalrow = goal[0]
@@ -54,10 +49,8 @@ def heuristic3(terrainmap):
         return difcol
 
 
-def heuristic4(terrainmap):
-
-    start = terrainmap.get_start_node()
-    goal = terrainmap.get_goal_node()
+def heuristic4(node_coords, node_dir, goal):
+    start = node_coords
     startrow = start[0]
     startcol = start[1]
     goalrow = goal[0]
@@ -69,10 +62,8 @@ def heuristic4(terrainmap):
     return difsum
 
 
-def heuristic5(terrainmap):
-
-    start = terrainmap.get_start_node()
-    goal = terrainmap.get_goal_node()
+def heuristic5(node_coords, node_dir, goal):
+    start = node_coords
     startrow = start[0]
     startcol = start[1]
     goalrow = goal[0]
@@ -83,8 +74,6 @@ def heuristic5(terrainmap):
     difcol = startcol - goalcol
     difsum = difabsrow + difabscol
     direction = UP
-
-    print difrow, difcol
 
     if difrow == 0:
         rowdirection = NOTHING
@@ -115,10 +104,8 @@ def heuristic5(terrainmap):
     return turnsum
 
 
-def heuristic6(terrainmap):
-
-    start = terrainmap.get_start_position()
-    goal = terrainmap.get_goal_position()
+def heuristic6(node_coords, node_dir, goal):
+    start = node_coords
     startrow = start[0]
     startcol = start[1]
     goalrow = goal[0]
@@ -141,3 +128,10 @@ def heuristic6(terrainmap):
     turnsum = difsum + turn
 
     return 3*turnsum
+
+H_MAP = {1: heuristic1,
+         2: heuristic2,
+         3: heuristic3,
+         4: heuristic4,
+         5: heuristic5,
+         6: heuristic6}
