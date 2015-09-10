@@ -9,6 +9,7 @@
 from math import ceil
 from node import Node
 from search_heap import SearchHeap
+from terrain import Terrain
 
 
 class Agent(object):
@@ -19,69 +20,94 @@ class Agent(object):
         :param: Heuristic - the difficulty level of the heuristic
     """
     def __init__(self, terrain, heuristic):
-        self.terrain = terrain
-        self.directions = {'N': (0, 1),
+        self.terrain = Terrain(terrain)
+        self.directions = {'N': (0, -1),
                            'E': (1, 0),
-                           'S': (0, -1),
+                           'S': (0, 1),
                            'W': (-1, 0)}
-        self.start_node = Node(terrain.get_start_position(), 'N')
+        self.start_node = Node(self.terrain.get_start_position(), 'N', 0)
         # Push our start position onto the heap
         self.search_heap = SearchHeap(initial=[self.start_node],
-                                      eval_fn=heuristic)
+                                      g_func=lambda node: node.g,
+                                      h_func=heuristic,
+                                      goal=self.terrain.get_goal_position())
         self.visited = []
-        self.position = list(terrain.get_start_position())
+        self.position = list(self.terrain.get_start_position())
         self.facing = 'N'
-        self.score = 0
-        self.last_move = None
         self.action_costs = {'forward': lambda cost: -cost,
                              'bash': lambda cost: -3,
-                             'turn': lambda cost: -ceil(cost/3),
+                             'turn': lambda cost: -ceil(float(cost)/float(3)),
                              'demolish': lambda cost: -4}
+        print "goal position:"
+        print self.terrain.get_goal_position()
 
-    def a_star_search(self, h):
+    def a_star_search(self):
         """A* search for the goal"""
-        # TODO
         while self.search_heap.is_not_empty():
             node = self.search_heap.pop()
             # add the node to self.visited to show we visited it
             self.visited.append(node)
-
+            """
+            print "current position:"
+            print node.position
+            print "current direction:"
+            print node.direction
+            print "node g score:"
+            print node.g
+            """
             if self.terrain.is_goal_node(node):
                 # TODO: make it return the path to the goal
                 # as a sequence of nodes
-                return node.f
+                print "Score of the path:"
+                print node.g + 100
+                print "Number of actions required to reach the goal:"
+                print node.depth
+                print "Number of nodes expanded:"
+                print len(self.visited)
+                break
 
-            for neighbor in self.get_search_neighbors(node):
+            for action, neighbor in self.get_search_neighbors(node).iteritems():
                 last_time_visited = self.has_been_visited_already(neighbor)
-                if last_time_visited is None:
+                if last_time_visited is None and self.terrain.node_inside_terrain(neighbor):
+                    neighbor.g = self.assign_g_cost(neighbor, node, self.terrain, action)
                     self.search_heap.push(neighbor)
 
     def get_search_neighbors(self, node):
         """Returns a list of node leaves from the given node."""
+        # These things create nodes
         turn_left = Node(position=node.position,
-                         direction=self.turn_left(node))
+                         direction=self.turn_left(node),
+                         depth=node.depth + 1)
         turn_right = Node(position=node.position,
-                          direction=self.turn_right(node))
+                          direction=self.turn_right(node),
+                          depth=node.depth + 1)
         move_forward = Node(position=self.forward(node),
-                            direction=node.direction)
+                            direction=node.direction,
+                            depth=node.depth + 1)
         bash_and_forward = Node(position=self.bash_and_forward(node),
-                                direction=node.direction)
-        # Update the g costs of the nodes
-        turn_left.g = (node.g +
-                       self.action_costs['turn'](
+                                direction=node.direction,
+                                depth=node.depth + 1)
+        # return the nodes
+        return {'turn_left': turn_left,
+                'turn_right': turn_right,
+                'move_forward': move_forward,
+                'bash_and_forward': bash_and_forward}
+
+    def assign_g_cost(self, node, parent, terrain, action):
+        if 'turn' in action:
+            # Update the g costs of the nodes
+            return(parent.g +
+                   self.action_costs['turn'](
                            self.terrain.get_cost_from_tuple(
                                node.position)))
-        turn_right.g = turn_left.g
-        move_forward.g = node.g + self.action_costs['forward'](
+        elif action == 'move_forward':
+            return parent.g + self.action_costs['forward'](
                                     self.terrain.get_cost_from_tuple(
-                                        move_forward.position))
-        bash_and_forward.g = move_forward.g + self.action_costs['bash'](0)
-        # return the nodes
-        return [turn_left, turn_right, move_forward, bash_and_forward]
-
-    def update_score(self, cost_fn, cost):
-        """Update the score based on the cost function and the node cost"""
-        self.score += cost_fn(cost)
+                                        node.position))
+        else:
+            return parent.g + self.action_costs['bash'](0) + self.action_costs['forward'](
+                                        self.terrain.get_cost_from_tuple(
+                                            node.position))
 
     def forward(self, node):
         """The rules to move forward"""
@@ -92,7 +118,9 @@ class Agent(object):
 
     def bash_and_forward(self, node):
         """The rules to bash and move forward"""
-        return self.forward(self.forward(node))
+        return self.forward(Node(position=self.forward(node),
+                                 direction=node.direction,
+                                 depth=node.depth + 1))
 
     def turn_right(self, node):
         """The rules to turn right"""

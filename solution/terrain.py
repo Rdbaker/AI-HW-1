@@ -24,16 +24,22 @@ class Terrain(object):
         self.goal_position = self._find_goal()
 
     def get_start_position(self):
-        """Getter for the start node"""
+        """Getter for the start node position"""
         return self.start_position
 
     def get_goal_position(self):
-        """Getter for the goal node"""
+        """Getter for the goal node position"""
         return self.goal_position
 
     def get_cost_from_tuple(self, t):
         """Get the cost of a node from a coordinate pairing"""
         return self.get_node_cost(t[0], t[1])
+
+    def node_inside_terrain(self, node):
+        pos = node.position
+        inside_x_bounds = (pos[0] > -1 and pos[0] < len(self.terrain_map))
+        inside_y_bounds = (pos[1] > -1 and pos[1] < len(self.terrain_map[0]))
+        return inside_x_bounds and inside_y_bounds
 
     def get_node_cost(self, row, col):
         """Get the cost of a node from coordinates"""
