@@ -116,14 +116,33 @@ def heuristic6(node_coords, node_dir, goal):
     difcol = startcol - goalcol
     difsum = difabsrow + difabscol
 
-    if difrow == 0 and difcol < 0:
-        turn = 0
-    elif difrow == 0 and difcol > 0:
+    direction = UP
+
+    print difrow, difcol
+
+    if difrow == 0:
+        rowdirection = NOTHING
+    elif difrow > 0:
+        rowdirection = UP
+    else:
+        rowdirection = DOWN
+
+    if difcol == 0:
+        coldirection = NOTHING
+    elif difcol > 0:
+        coldirection = RIGHT
+    else:
+        coldirection = LEFT
+
+    if direction == rowdirection or direction == coldirection:
+        if rowdirection == NOTHING or coldirection == NOTHING:
+            turn = 0
+        else:
+            turn = .3
+    else:
         turn = .6
-    elif difrow != 0 and difcol <= 0:
-        turn = .3
-    elif difrow != 0 and difcol > 0:
-        turn = .6
+
+    # Used to calculate the minimum amount of turning needed
 
     turnsum = difsum + turn
 
