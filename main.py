@@ -26,7 +26,12 @@ def start_homework(file_n, heuristic):
         print 'Program exiting, could not find file.'
         exit(1)
 
-    return solution.solve(terrain_map, heuristic)
+    # check that the heuristic is good
+    if heuristic not in [str(i) for i in range(1, 7)]:
+        print 'Program exiting, heuristic not in specified range.'
+        exit(1)
+
+    return solution.solve(terrain_map, int(heuristic))
 
 
 if __name__ == "__main__":
@@ -38,7 +43,7 @@ if __name__ == "__main__":
     if not FILE_NAME:
         FILE_NAME = 'assignment/sample_board.txt'
 
-    HEURISTIC = raw_input('Please give a heuristic measure of one of [1, 6]')
+    HEURISTIC = raw_input('Please give a heuristic measure of one of [1, 6]: ')
 
     # start the homework
     start_homework(FILE_NAME, HEURISTIC)
