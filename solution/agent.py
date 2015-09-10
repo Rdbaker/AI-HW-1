@@ -10,6 +10,7 @@ from math import ceil
 from node import Node
 from search_heap import SearchHeap
 from terrain import Terrain
+from utils import backtrace
 
 
 class Agent(object):
@@ -42,19 +43,15 @@ class Agent(object):
         print self.terrain.get_goal_position()
 
     def a_star_search(self):
-        """A* search for the goal"""
+        """
+        A* search for the goal
+        inspired by:
+            https://github.com/qiao/PathFinding.js/blob/master/src/finders/AStarFinder.js#L54
+        """
         while self.search_heap.is_not_empty():
             node = self.search_heap.pop()
             # add the node to self.visited to show we visited it
             self.visited.append(node)
-            """
-            print "current position:"
-            print node.position
-            print "current direction:"
-            print node.direction
-            print "node g score:"
-            print node.g
-            """
             if self.terrain.is_goal_node(node):
                 # TODO: make it return the path to the goal
                 # as a sequence of nodes
@@ -64,6 +61,8 @@ class Agent(object):
                 print node.depth
                 print "Number of nodes expanded:"
                 print len(self.visited)
+                print "Actions taken from start:"
+                backtrace(node)
                 break
 
             for action, neighbor in self.get_search_neighbors(node).iteritems():
@@ -77,16 +76,24 @@ class Agent(object):
         # These things create nodes
         turn_left = Node(position=node.position,
                          direction=self.turn_left(node),
-                         depth=node.depth + 1)
+                         depth=node.depth + 1,
+                         action='turn left',
+                         parent=node)
         turn_right = Node(position=node.position,
                           direction=self.turn_right(node),
-                          depth=node.depth + 1)
+                          depth=node.depth + 1,
+                          action='turn right',
+                          parent=node)
         move_forward = Node(position=self.forward(node),
                             direction=node.direction,
-                            depth=node.depth + 1)
+                            depth=node.depth + 1,
+                            action='move forward',
+                            parent=node)
         bash_and_forward = Node(position=self.bash_and_forward(node),
                                 direction=node.direction,
-                                depth=node.depth + 1)
+                                depth=node.depth + 1,
+                                action='bash and move forward',
+                                parent=node)
         # return the nodes
         return {'turn_left': turn_left,
                 'turn_right': turn_right,
